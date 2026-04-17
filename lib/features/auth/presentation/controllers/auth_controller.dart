@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'package:get/get.dart';
 import 'package:mc/core/constants/api_constants.dart';
 import 'package:mc/core/constants/app_constants.dart';
@@ -8,6 +9,21 @@ import 'package:mc/core/services/api_service.dart';
 import 'package:mc/core/services/storage_service.dart';
 
 class AuthController extends GetxController {
+
+  // ─────────────────────── User Profile (reactive) ───────────────────────
+  final RxString userName = ''.obs;
+  final RxString userImage = ''.obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    userName(await PrefsHelper.getString(AppConstants.name));
+    userImage(await PrefsHelper.getString(AppConstants.image));
+  }
 
   // ─────────────────────── Login ───────────────────────
   final RxBool logInLoading = false.obs;
@@ -39,6 +55,9 @@ class AuthController extends GetxController {
         PrefsHelper.setString(AppConstants.refreshToken, tokens['refreshToken'] ?? ''),
         PrefsHelper.setBool(AppConstants.isLogged, true),
       ]);
+
+      userName(user['name'] ?? '');
+      userImage(user['profileImage'] ?? '');
 
       final role = user['role'] as String;
       if (role == 'merchandiser') {
@@ -147,6 +166,88 @@ class AuthController extends GetxController {
     }
 
     resetLoading(false);
+  }
+
+  // ─────────────────────── Change Password ───────────────────────
+  final RxBool changePasswordLoading = false.obs;
+  final RxString changePasswordError = ''.obs;
+
+  Future<void> changePassword({
+    required String currentPassword,
+    required String password,
+    required String confirmPassword,
+  }) async {
+    changePasswordError('');
+    changePasswordLoading(true);
+
+    final response = await ApiClient.postData(
+      ApiConstants.changePassword,
+      jsonEncode({
+        "currentPassword": currentPassword,
+        "password": password,
+        "confirmPassword": confirmPassword,
+      }),
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      Get.back();
+    } else {
+      changePasswordError(_extractMessage(response.body, 'Failed to change password'));
+    }
+
+    changePasswordLoading(false);
+  }
+
+  // ─────────────────────── Update Profile ───────────────────────
+  final RxBool updateLoading = false.obs;
+  final RxString updateError = ''.obs;
+
+  Future<void> updateProfile({
+    required String name,
+    required String phone,
+    required String dateOfBirth,
+    required String address,
+    File? imageFile,
+  }) async {
+    updateError('');
+    updateLoading(true);
+
+    final fields = {
+      'name': name,
+      'phone': phone,
+      'dateOfBirth': dateOfBirth,
+      'address': address,
+    };
+
+    final response = await ApiClient.putMultipartData(
+      ApiConstants.updateProfileEndPoint,
+      fields,
+      multipartBody: imageFile != null ? [MultipartBody('profileImage', imageFile)] : [],
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      final data = response.body['data'];
+      final user = data is Map && data['user'] != null ? data['user'] : data;
+
+      final newImage = user['profileImage']?.toString() ?? await PrefsHelper.getString(AppConstants.image);
+
+      await Future.wait([
+        PrefsHelper.setString(AppConstants.name, name),
+        PrefsHelper.setString(AppConstants.phone, phone),
+        PrefsHelper.setString(AppConstants.address, address),
+        PrefsHelper.setString(AppConstants.dateOfBirth, dateOfBirth),
+        PrefsHelper.setString(AppConstants.image, newImage),
+      ]);
+
+      userName(name);
+      userImage(newImage);
+
+      Get.back();
+    } else {
+      updateError(_extractMessage(response.body, 'Update failed'));
+    }
+
+    updateLoading(false);
   }
 
   // ─────────────────────── Logout ───────────────────────

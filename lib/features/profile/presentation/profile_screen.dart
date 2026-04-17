@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:mc/core/constants/api_constants.dart';
+import 'package:mc/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:mc/global/custom_assets/assets.gen.dart';
 import 'package:mc/core/routes/app_routes.dart';
 import 'package:mc/core/utils/app_colors.dart';
@@ -16,6 +18,8 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final AuthController auth = Get.find<AuthController>();
+
     return Scaffold(
       body: Column(
         children: [
@@ -28,18 +32,18 @@ class ProfileScreen extends StatelessWidget {
             child: Column(
               children: [
                 SizedBox(height: 100.h),
-                CustomNetworkImage(
-                    imageUrl: "imageUrl",
+                Obx(() => CustomNetworkImage(
+                    imageUrl: ApiConstants.imageBaseUrl + auth.userImage.value,
                     height: 100.h,
                     width: 100.w,
-                    boxShape: BoxShape.circle),
-                CustomText(
-                    text: "Sagor Ahamed",
+                    boxShape: BoxShape.circle)),
+                Obx(() => CustomText(
+                    text: auth.userName.value,
                     fontSize: 18.h,
                     fontWeight: FontWeight.w500,
                     bottom: 16.h,
                     top: 8.h,
-                    color: Colors.white)
+                    color: Colors.white)),
               ],
             ),
           ),

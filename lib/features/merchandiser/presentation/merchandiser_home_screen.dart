@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:mc/core/constants/api_constants.dart';
+import 'package:mc/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:mc/global/custom_assets/assets.gen.dart';
 import 'package:mc/core/routes/app_routes.dart';
 import 'package:mc/core/utils/app_colors.dart';
@@ -16,6 +18,7 @@ class MerchandiserHomeScreen extends StatefulWidget {
 }
 
 class _MerchandiserHomeScreenState extends State<MerchandiserHomeScreen> {
+  final AuthController _auth = Get.find<AuthController>();
 
   bool? hasReturns;
   List actions = [
@@ -48,12 +51,11 @@ class _MerchandiserHomeScreenState extends State<MerchandiserHomeScreen> {
                       fit: BoxFit.cover)),
               child: Row(
                 children: [
-                  CustomNetworkImage(
-                      imageUrl:
-                          "https://randomuser.me/api/portraits/women/1.jpg",
+                  Obx(() => CustomNetworkImage(
+                      imageUrl: ApiConstants.imageBaseUrl + _auth.userImage.value,
                       height: 50.h,
                       width: 50.w,
-                      boxShape: BoxShape.circle),
+                      boxShape: BoxShape.circle)),
                   SizedBox(width: 12.w),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -62,7 +64,9 @@ class _MerchandiserHomeScreenState extends State<MerchandiserHomeScreen> {
                           text: "Welcome!",
                           color: Colors.white,
                           fontSize: 12.h),
-                      CustomText(text: "Sagor Ahamed", color: Colors.white),
+                      Obx(() => CustomText(
+                          text: _auth.userName.value,
+                          color: Colors.white)),
                     ],
                   ),
                   const Spacer(),
