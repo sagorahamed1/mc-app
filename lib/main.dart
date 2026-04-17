@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
-import 'package:mc/routes/approutes.dart';
-import 'package:mc/themes/light_theme.dart';
-import 'package:mc/views/screens/splash/splash_screen.dart';
+import 'package:mc/core/di/dependency_injection.dart';
+import 'package:mc/core/routes/app_routes.dart';
+import 'package:mc/core/theme/app_theme.dart';
+import 'package:mc/features/splash/presentation/splash_screen.dart';
 import 'package:toastification/toastification.dart';
 
 void main() {
@@ -28,8 +29,9 @@ class MyApp extends StatelessWidget {
             title: 'MC',
             debugShowCheckedModeBanner: false,
             initialRoute: AppRoutes.splashScreen,
+            initialBinding: DependencyInjection(),
             getPages: AppRoutes.routes,
-            theme: light(),
+            theme: lightTheme(),
             themeMode: ThemeMode.light,
             home: child,
           ),
