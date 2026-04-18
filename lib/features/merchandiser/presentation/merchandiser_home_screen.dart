@@ -221,7 +221,11 @@ class _MerchandiserHomeScreenState extends State<MerchandiserHomeScreen> {
                         return GestureDetector(
                           onTap: () {
                             if (index == 0) {
-                              Get.toNamed(AppRoutes.productScreen);
+                              final merch = Get.find<MerchandiserController>();
+                              final storeId = merch.visits.isNotEmpty
+                                  ? merch.visits.first.store.id
+                                  : '';
+                              Get.toNamed(AppRoutes.productScreen, arguments: storeId);
                             } else if (index == 1) {
                               //
                               Get.toNamed(AppRoutes.reportScreen);

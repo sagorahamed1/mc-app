@@ -15,6 +15,7 @@ class ApiConstants {
   static const String updateProfileEndPoint = "/user/me";
 
   static const String merchandiserVisits = "/visit/merchandiser";
+  static const String productEndPoint = "/product";
   static String visitClockIn(String visitId) => "/visit/$visitId/clock-in";
   static String visitClockOut(String visitId) => "/visit/$visitId/clock-out";
   static String visitReschedule(String visitId) => "/visit/$visitId/submit-reschedule";
