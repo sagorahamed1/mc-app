@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:mc/core/constants/api_constants.dart';
 import 'package:mc/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:mc/features/merchandiser/presentation/controllers/merchandiser_controller.dart';
 import 'package:mc/global/custom_assets/assets.gen.dart';
 import 'package:mc/core/routes/app_routes.dart';
 import 'package:mc/core/utils/app_colors.dart';
 import 'package:mc/shared/widgets/custom_network_image.dart';
 import 'package:mc/shared/widgets/custom_button.dart';
+import 'package:mc/shared/widgets/custom_schedule_card.dart';
 import 'package:mc/shared/widgets/custom_text.dart';
+import 'package:mc/shared/widgets/custom_text_field.dart';
 
 class MerchandiserHomeScreen extends StatefulWidget {
   const MerchandiserHomeScreen({super.key});
@@ -52,6 +56,7 @@ class _MerchandiserHomeScreenState extends State<MerchandiserHomeScreen> {
               child: Row(
                 children: [
                   Obx(() => CustomNetworkImage(
+                    border: Border.all(color: Colors.grey, width: 0.5.r),
                       imageUrl: ApiConstants.imageBaseUrl + _auth.userImage.value,
                       height: 50.h,
                       width: 50.w,
@@ -128,97 +133,10 @@ class _MerchandiserHomeScreenState extends State<MerchandiserHomeScreen> {
                     ],
                   ),
                   SizedBox(height: 10.h),
-                  Container(
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        boxShadow: [
-                          BoxShadow(
-                              color: Colors.grey.shade400,
-                              blurRadius: 1.5,
-                              offset: const Offset(0.5, 0.5))
-                        ],
-                        borderRadius: BorderRadius.circular(8.r)),
-                    child: Padding(
-                      padding: EdgeInsets.all(10.r),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              CustomText(text: "#123456", fontSize: 10.h),
-                              Container(
-                                decoration: BoxDecoration(
-                                    color: const Color(0xffE7F9FF),
-                                    borderRadius: BorderRadius.circular(100.r)),
-                                child: Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 10.w, vertical: 4.h),
-                                  child: Center(
-                                    child: CustomText(
-                                        text: "Upcoming",
-                                        color: const Color(0xff305CDE),
-                                        fontSize: 10.h),
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              CustomText(
-                                  text: "Alexandra Store", fontSize: 16.h),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  CustomText(
-                                      text: "Start Within:", fontSize: 10.h),
-                                  Row(
-                                    children: [
-                                      CustomText(
-                                          text: "00:15",
-                                          fontSize: 10.h,
-                                          color: AppColors.primaryColor),
-                                      CustomText(text: "min", fontSize: 8.h),
-                                    ],
-                                  ),
-                                ],
-                              )
-                            ],
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  CustomText(
-                                      text: "5th North Avenue,Baridhara DOHS",
-                                      fontSize: 12.h),
-                                  CustomText(
-                                      text: "Schedule: 08:00AM - 10.00 AM",
-                                      fontSize: 11.h),
-                                  CustomText(
-                                      text: "Last Visited: 08/08/25 at 4:30 PM",
-                                      fontSize: 11.h),
-                                ],
-                              ),
-                              CustomButton(
-                                  width: 90.w,
-                                  height: 30.h,
-                                  borderRadius: 10.r,
-                                  loaderIgnore: true,
-                                  fontSize: 10.h,
-                                  title: "Clock In",
-                                  onpress: () {})
-                            ],
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
+                  _RecentScheduleCard(),
+
+
+
                   SizedBox(height: 16.h),
                   Container(
                     decoration: BoxDecoration(
@@ -421,5 +339,111 @@ class _MerchandiserHomeScreenState extends State<MerchandiserHomeScreen> {
         );
       },
     );
+  }
+}
+
+class _RecentScheduleCard extends StatelessWidget {
+  _RecentScheduleCard();
+
+  final MerchandiserController _ctrl = Get.find<MerchandiserController>();
+
+  Color _statusColor(String status) {
+    switch (status) {
+      case 'ongoing':
+        return Colors.green;
+      case 'completed':
+        return Colors.grey;
+      default:
+        return const Color(0xff305CDE);
+    }
+  }
+
+  String _formatSchedule(DateTime dt) =>
+      DateFormat('MMM dd, hh:mm a').format(dt.toLocal());
+
+  String _formatLastVisited(DateTime? dt) {
+    if (dt == null) return 'N/A';
+    return DateFormat('dd/MM/yy \'at\' hh:mm a').format(dt.toLocal());
+  }
+
+  void _showRescheduleDialog(BuildContext context, String visitId) {
+    final reasonCtrl = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: const Text("Reschedule Reason"),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CustomTextField(
+                  controller: reasonCtrl,
+                  hintText: "Type reason here...",
+                  maxLine: 6),
+              SizedBox(height: 20.h),
+              Obx(() => CustomButtonGradiant(
+                    title: _ctrl.loadingIds.contains(visitId)
+                        ? "Submitting..."
+                        : "Submit",
+                    onpress: () {
+                      final reason = reasonCtrl.text.trim();
+                      if (reason.isEmpty) return;
+                      Navigator.pop(ctx);
+                      _ctrl.submitReschedule(visitId, reason);
+                    },
+                  )),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Obx(() {
+      if (_ctrl.isLoading.value && _ctrl.visits.isEmpty) {
+        return const Center(child: CircularProgressIndicator());
+      }
+      if (_ctrl.visits.isEmpty) {
+        return const SizedBox.shrink();
+      }
+
+      final visit = _ctrl.visits.first;
+      final isLoading = _ctrl.loadingIds.contains(visit.id);
+      final isTimeOver =
+          visit.status == 'pending' && DateTime.now().isAfter(visit.dateTime);
+
+      String btnName;
+      VoidCallback onTap;
+
+      if (visit.status == 'completed') {
+        btnName = 'Completed';
+        onTap = () {};
+      } else if (isTimeOver) {
+        btnName = isLoading ? '...' : 'Contact Manager';
+        onTap = () => _showRescheduleDialog(context, visit.id);
+      } else if (visit.status == 'ongoing') {
+        btnName = isLoading ? '...' : 'Clock Out';
+        onTap = isLoading ? () {} : () => _ctrl.clockOut(visit.id);
+      } else {
+        btnName = isLoading ? '...' : 'Clock In';
+        onTap = isLoading ? () {} : () => _ctrl.clockIn(visit.id);
+      }
+
+      return CustomScheduleCard(
+        id: visit.store.storeNumber,
+        status: visit.displayStatus,
+        statusColor: _statusColor(visit.status),
+        storeName: visit.store.name,
+        address: visit.store.address,
+        schedule: _formatSchedule(visit.dateTime),
+        lastVisited: _formatLastVisited(visit.lastVisitAt),
+        scheduledTime: visit.dateTime,
+        btnName: btnName,
+        onClockIn: onTap,
+      );
+    });
   }
 }

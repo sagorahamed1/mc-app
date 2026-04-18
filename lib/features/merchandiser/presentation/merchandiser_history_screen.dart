@@ -55,7 +55,7 @@ class _MerchandiserHistoryScreenState
                     address: "22 Lakeview Road, Banani",
                     schedule: "10:30 AM - 12:00 PM",
                     lastVisited: "10/08/25 at 11:30 AM",
-                    startWithin: "0",
+                    scheduledTime: DateTime.now(),
                     btnName: "See Order",
                   );
                 },

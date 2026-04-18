@@ -1,6 +1,9 @@
 class ApiConstants {
-  static const String baseUrl = "http://172.252.13.130:8085/api/v1";
-  static const String imageBaseUrl = "http://172.252.13.130:8085/";
+  // static const String baseUrl = "http://172.252.13.130:8085/api/v1";
+  // static const String imageBaseUrl = "http://172.252.13.130:8085/";
+
+  static const String baseUrl = "http://10.10.11.90:8085/api/v1";
+  static const String imageBaseUrl = "http://10.10.11.90:8086/uploads/";
 
   static const String signInEndPoint = "/auth/login";
   static const String forgotPasswordPoint = "/auth/forgot-password";
@@ -10,4 +13,9 @@ class ApiConstants {
   static const String changePassword = "/auth/change-password";
   static const String logoutEndPoint = "/auth/logout";
   static const String updateProfileEndPoint = "/user/me";
+
+  static const String merchandiserVisits = "/visit/merchandiser";
+  static String visitClockIn(String visitId) => "/visit/$visitId/clock-in";
+  static String visitClockOut(String visitId) => "/visit/$visitId/clock-out";
+  static String visitReschedule(String visitId) => "/visit/$visitId/submit-reschedule";
 }
