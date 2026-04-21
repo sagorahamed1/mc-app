@@ -10,7 +10,9 @@ class ProductController extends GetxController {
   final Rx<ProductStoreModel?> store = Rx(null);
   final RxBool isLoading = false.obs;
   final RxBool isPaginationLoading = false.obs;
+  final RxBool isSubmitting = false.obs;
   final RxSet<String> selectedIds = <String>{}.obs;
+  final RxMap<String, int> quantities = <String, int>{}.obs;
 
   final ScrollController scrollController = ScrollController();
 
@@ -18,6 +20,7 @@ class ProductController extends GetxController {
   static const int _limit = 10;
   bool _hasMore = true;
   String _storeId = '';
+  String visitId = '';
 
   @override
   void onInit() {
@@ -40,15 +43,18 @@ class ProductController extends GetxController {
     }
   }
 
-  Future<void> loadProducts(String storeId, {bool refresh = false}) async {
+  Future<void> loadProducts(String storeId,
+      {bool refresh = false, String vid = ''}) async {
     if (refresh) {
       _currentPage = 1;
       _hasMore = true;
       products.clear();
       store.value = null;
       selectedIds.clear();
+      quantities.clear();
     }
     _storeId = storeId;
+    visitId = vid;
     await _fetchPage(1, append: false);
   }
 
@@ -92,8 +98,46 @@ class ProductController extends GetxController {
   void toggleSelection(String productId) {
     if (selectedIds.contains(productId)) {
       selectedIds.remove(productId);
+      quantities.remove(productId);
     } else {
       selectedIds.add(productId);
+    }
+  }
+
+  void setQuantity(String productId, int qty) {
+    if (qty > 0) {
+      quantities[productId] = qty;
+    } else {
+      quantities.remove(productId);
+    }
+  }
+
+  List<ProductModel> get selectedProducts =>
+      products.where((p) => selectedIds.contains(p.id)).toList();
+
+  Future<bool> submitOrder() async {
+    isSubmitting(true);
+    final body = {
+      'visitId': visitId,
+      'products': selectedProducts.map((p) {
+        return {
+          'productId': p.id,
+          'unitNeed': quantities[p.id] ?? 0,
+        };
+      }).toList(),
+    };
+
+    final response = await ApiClient.postData(ApiConstants.orderEndPoint, body);
+    isSubmitting(false);
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return true;
+    } else {
+      ToastMessageHelper.showToastMessage(
+        response.statusText ?? 'Failed to submit order',
+        title: 'Error',
+      );
+      return false;
     }
   }
 }

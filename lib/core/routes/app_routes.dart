@@ -15,7 +15,10 @@ import 'package:mc/features/merchandiser/presentation/merchandiser_bottom_nav_ba
 import 'package:mc/features/merchandiser/presentation/assigned_stores_screen.dart';
 import 'package:mc/features/merchandiser/presentation/confirm_order_screen.dart';
 import 'package:mc/features/merchandiser/presentation/merchandiser_home_screen.dart';
+import 'package:mc/features/merchandiser/presentation/merchandiser_order_screen.dart';
 import 'package:mc/features/merchandiser/presentation/missing_sticker_screen.dart';
+import 'package:mc/features/merchandiser/presentation/order_confirm_screen.dart';
+import 'package:mc/features/merchandiser/presentation/see_order_screen.dart';
 import 'package:mc/features/merchandiser/presentation/product_screen.dart';
 import 'package:mc/features/merchandiser/presentation/read_update_screen.dart';
 import 'package:mc/features/merchandiser/presentation/report_screen.dart';
@@ -58,6 +61,9 @@ class AppRoutes {
   static const String missingStickerScreen = "/MissingStickerScreen";
   static const String reportScreen = "/ReportScreen";
   static const String confirmOrderScreen = "/ConfirmOrderScreen";
+  static const String merchandiserOrderScreen = "/MerchandiserOrderScreen";
+  static const String orderConfirmScreen = "/OrderConfirmScreen";
+  static const String seeOrderScreen = "/SeeOrderScreen";
 
 
 
@@ -89,6 +95,9 @@ class AppRoutes {
     GetPage(name: missingStickerScreen, page: () =>  MissingStickerScreen()),
     GetPage(name: reportScreen, page: () =>  ReportScreen()),
     GetPage(name: confirmOrderScreen, page: () =>  ConfirmOrderScreen()),
+    GetPage(name: merchandiserOrderScreen, page: () => const MerchandiserOrderScreen()),
+    GetPage(name: orderConfirmScreen, page: () => const OrderConfirmScreen()),
+    GetPage(name: seeOrderScreen, page: () => const SeeOrderScreen()),
 
   ];
 }

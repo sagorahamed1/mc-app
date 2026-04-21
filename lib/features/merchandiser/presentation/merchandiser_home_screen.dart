@@ -30,7 +30,7 @@ class _MerchandiserHomeScreenState extends State<MerchandiserHomeScreen> {
     {"icon": Assets.icons.report.svg(), "title": "Report"},
     {
       "icon": Assets.icons.missingInvoices.svg(),
-      "title": "Missing invoices/stickers"
+      "title": "Order"
     },
     {
       "icon": Assets.icons.downloadPreviousSales.svg(),
@@ -137,72 +137,72 @@ class _MerchandiserHomeScreenState extends State<MerchandiserHomeScreen> {
 
 
 
-                  SizedBox(height: 16.h),
-                  Container(
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        boxShadow: [
-                          BoxShadow(
-                              color: Colors.grey.shade400,
-                              blurRadius: 1.5,
-                              offset: const Offset(0.5, 0.5))
-                        ],
-                        borderRadius: BorderRadius.circular(8.r)),
-                    child: Padding(
-                      padding: EdgeInsets.all(16.r),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          SizedBox(
-                            width: 280.w,
-                            child: CustomText(
-                                textAlign: TextAlign.center,
-                                maxline: 3,
-                                text:
-                                    "Did this store receive the previous Carrier delivery?",
-                                fontSize: 18.h),
-                          ),
-                          CustomText(
-                            text: "Order Date & Time: 08/08/25 at 4:30 PM",
-                            fontSize: 10.h,
-                            color: const Color(0xff5C5C5C),
-                            top: 6.h,
-                          ),
-                          SizedBox(height: 12.h),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              CustomButton(
-                                  width: 90.w,
-                                  height: 30.h,
-                                  borderRadius: 10.r,
-                                  loaderIgnore: true,
-                                  color: const Color(0xff5C5C5C),
-                                  boderColor: Colors.transparent,
-                                  fontSize: 10.h,
-                                  title: "No",
-                                  onpress: () {}),
-                              SizedBox(width: 16.w),
-                              CustomButton(
-                                  width: 90.w,
-                                  height: 30.h,
-                                  borderRadius: 10.r,
-                                  loaderIgnore: true,
-                                  fontSize: 10.h,
-                                  title: "Yes",
-                                  onpress: () {
-
-                                    showReturnsDialog();
-
-
-                                  })
-                            ],
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
                   SizedBox(height: 10.h),
+                  // Container(
+                  //   decoration: BoxDecoration(
+                  //       color: Colors.white,
+                  //       boxShadow: [
+                  //         BoxShadow(
+                  //             color: Colors.grey.shade400,
+                  //             blurRadius: 1.5,
+                  //             offset: const Offset(0.5, 0.5))
+                  //       ],
+                  //       borderRadius: BorderRadius.circular(8.r)),
+                  //   child: Padding(
+                  //     padding: EdgeInsets.all(16.r),
+                  //     child: Column(
+                  //       crossAxisAlignment: CrossAxisAlignment.center,
+                  //       children: [
+                  //         SizedBox(
+                  //           width: 280.w,
+                  //           child: CustomText(
+                  //               textAlign: TextAlign.center,
+                  //               maxline: 3,
+                  //               text:
+                  //                   "Did this store receive the previous Carrier delivery?",
+                  //               fontSize: 18.h),
+                  //         ),
+                  //         CustomText(
+                  //           text: "Order Date & Time: 08/08/25 at 4:30 PM",
+                  //           fontSize: 10.h,
+                  //           color: const Color(0xff5C5C5C),
+                  //           top: 6.h,
+                  //         ),
+                  //         SizedBox(height: 12.h),
+                  //         Row(
+                  //           mainAxisAlignment: MainAxisAlignment.center,
+                  //           children: [
+                  //             CustomButton(
+                  //                 width: 90.w,
+                  //                 height: 30.h,
+                  //                 borderRadius: 10.r,
+                  //                 loaderIgnore: true,
+                  //                 color: const Color(0xff5C5C5C),
+                  //                 boderColor: Colors.transparent,
+                  //                 fontSize: 10.h,
+                  //                 title: "No",
+                  //                 onpress: () {}),
+                  //             SizedBox(width: 16.w),
+                  //             CustomButton(
+                  //                 width: 90.w,
+                  //                 height: 30.h,
+                  //                 borderRadius: 10.r,
+                  //                 loaderIgnore: true,
+                  //                 fontSize: 10.h,
+                  //                 title: "Yes",
+                  //                 onpress: () {
+                  //
+                  //                   showReturnsDialog();
+                  //
+                  //
+                  //                 })
+                  //           ],
+                  //         )
+                  //       ],
+                  //     ),
+                  //   ),
+                  // ),
+                  // SizedBox(height: 10.h),
                   Row(
                     children: [
                       CustomText(text: "Actions"),
@@ -222,15 +222,22 @@ class _MerchandiserHomeScreenState extends State<MerchandiserHomeScreen> {
                           onTap: () {
                             if (index == 0) {
                               final merch = Get.find<MerchandiserController>();
-                              final storeId = merch.visits.isNotEmpty
-                                  ? merch.visits.first.store.id
-                                  : '';
-                              Get.toNamed(AppRoutes.productScreen, arguments: storeId);
+                              final visit = merch.visits.isNotEmpty ? merch.visits.first : null;
+                              Get.toNamed(AppRoutes.productScreen, arguments: {
+                                'storeId': visit?.store.id ?? '',
+                                'visitId': visit?.id ?? '',
+                                'storeName': visit?.store.name ?? '',
+                                'storeNumber': visit?.store.storeNumber ?? '',
+                                'visitDate': visit?.dateTime,
+                              });
                             } else if (index == 1) {
-                              //
-                              Get.toNamed(AppRoutes.reportScreen);
+                              final merch = Get.find<MerchandiserController>();
+                              final visitId = merch.visits.isNotEmpty ? merch.visits.first.id : '';
+                              Get.toNamed(AppRoutes.reportScreen, arguments: visitId);
                             } else if(index == 2){
-                              Get.toNamed(AppRoutes.missingStickerScreen);
+                              final merch = Get.find<MerchandiserController>();
+                              final storeId = merch.visits.isNotEmpty ? merch.visits.first.store.id : '';
+                              Get.toNamed(AppRoutes.merchandiserOrderScreen, arguments: storeId);
                             }
                           },
                           child: Container(

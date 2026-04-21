@@ -25,8 +25,10 @@ class _ProductScreenState extends State<ProductScreen> {
   @override
   void initState() {
     super.initState();
-    final storeId = Get.arguments as String? ?? '';
-    _ctrl.loadProducts(storeId);
+    final args = Get.arguments as Map<String, dynamic>? ?? {};
+    final storeId = args['storeId'] as String? ?? '';
+    final visitId = args['visitId'] as String? ?? '';
+    _ctrl.loadProducts(storeId, vid: visitId);
   }
 
   @override
@@ -50,7 +52,10 @@ class _ProductScreenState extends State<ProductScreen> {
         padding: EdgeInsets.symmetric(horizontal: 16.w),
         child: CustomButtonGradiant(
           title: "PLACE ORDER",
-          onpress: () => Get.toNamed(AppRoutes.confirmOrderScreen),
+          onpress: () {
+            final args = Get.arguments as Map<String, dynamic>? ?? {};
+            Get.toNamed(AppRoutes.confirmOrderScreen, arguments: args);
+          },
         ),
       ),
       body: SafeArea(
@@ -124,6 +129,8 @@ class _ProductScreenState extends State<ProductScreen> {
                             isSelected:
                                 _ctrl.selectedIds.contains(product.id),
                             onTap: () => _ctrl.toggleSelection(product.id),
+                            onQuantityChanged: (qty) =>
+                                _ctrl.setQuantity(product.id, qty),
                           ));
                     },
                   );
@@ -141,12 +148,14 @@ class ProductCard extends StatelessWidget {
   final ProductModel product;
   final bool isSelected;
   final VoidCallback onTap;
+  final ValueChanged<int> onQuantityChanged;
 
   const ProductCard({
     super.key,
     required this.product,
     required this.isSelected,
     required this.onTap,
+    required this.onQuantityChanged,
   });
 
   String _formatLastOrder(DateTime? dt) {
@@ -249,6 +258,10 @@ class ProductCard extends StatelessWidget {
                       child: TextField(
                         keyboardType: TextInputType.number,
                         style: TextStyle(fontSize: 13.h),
+                        onChanged: (val) {
+                          final qty = int.tryParse(val) ?? 0;
+                          onQuantityChanged(qty);
+                        },
                         decoration: InputDecoration(
                           contentPadding:
                               EdgeInsets.symmetric(horizontal: 12.w),

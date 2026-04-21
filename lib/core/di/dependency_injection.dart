@@ -2,6 +2,8 @@ import 'package:get/get.dart';
 import 'package:mc/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:mc/features/merchandiser/presentation/controllers/merchandiser_controller.dart';
 import 'package:mc/features/merchandiser/presentation/controllers/product_controller.dart';
+import 'package:mc/features/merchandiser/presentation/controllers/report_controller.dart';
+import 'package:mc/features/merchandiser/presentation/controllers/order_controller.dart';
 
 class DependencyInjection implements Bindings {
   @override
@@ -9,5 +11,7 @@ class DependencyInjection implements Bindings {
     Get.lazyPut(() => AuthController(), fenix: true);
     Get.lazyPut(() => MerchandiserController(), fenix: true);
     Get.lazyPut(() => ProductController(), fenix: true);
+    Get.lazyPut(() => ReportController(), fenix: true);
+    Get.lazyPut(() => OrderController(), fenix: true);
   }
 }

@@ -16,6 +16,10 @@ class ApiConstants {
 
   static const String merchandiserVisits = "/visit/merchandiser";
   static const String productEndPoint = "/product";
+  static const String orderEndPoint = "/order";
+  static const String storeReportQuestions = "/store-report-question?limit=1000";
+  static const String uploadMultiple = "/upload/multiple";
+  static String submitReport(String visitId) => "/visit/$visitId/submit-report";
   static String visitClockIn(String visitId) => "/visit/$visitId/clock-in";
   static String visitClockOut(String visitId) => "/visit/$visitId/clock-out";
   static String visitReschedule(String visitId) => "/visit/$visitId/submit-reschedule";

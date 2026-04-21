@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 import 'package:get/get.dart';
 import 'package:mc/core/constants/api_constants.dart';
@@ -35,8 +34,7 @@ class AuthController extends GetxController {
 
     final response = await ApiClient.postData(
       ApiConstants.signInEndPoint,
-      jsonEncode({"email": email, "password": password}),
-      headers: {'Content-Type': 'application/json'},
+      {"email": email, "password": password},
     );
 
     if (response.statusCode == 200 || response.statusCode == 201) {
@@ -84,8 +82,7 @@ class AuthController extends GetxController {
 
     final response = await ApiClient.postData(
       ApiConstants.forgotPasswordPoint,
-      jsonEncode({"email": email}),
-      headers: {'Content-Type': 'application/json'},
+      {"email": email},
     );
 
     if (response.statusCode == 200 || response.statusCode == 201) {
@@ -109,7 +106,7 @@ class AuthController extends GetxController {
 
     final response = await ApiClient.postData(
       ApiConstants.verifyEmailEndPoint,
-      jsonEncode({"otp": otp}),
+      {"otp": otp},
     );
 
     if (response.statusCode == 200 || response.statusCode == 201) {
@@ -129,7 +126,7 @@ class AuthController extends GetxController {
 
     final response = await ApiClient.postData(
       ApiConstants.resendOtpEndPoint,
-      jsonEncode({}),
+      {},
     );
 
     if (response.statusCode == 200 || response.statusCode == 201) {
@@ -155,7 +152,7 @@ class AuthController extends GetxController {
 
     final response = await ApiClient.postData(
       ApiConstants.setPasswordEndPoint,
-      jsonEncode({"password": password, "confirmPassword": confirmPassword}),
+      {"password": password, "confirmPassword": confirmPassword},
     );
 
     if (response.statusCode == 200 || response.statusCode == 201) {
@@ -182,11 +179,11 @@ class AuthController extends GetxController {
 
     final response = await ApiClient.postData(
       ApiConstants.changePassword,
-      jsonEncode({
+      {
         "currentPassword": currentPassword,
         "password": password,
         "confirmPassword": confirmPassword,
-      }),
+      },
     );
 
     if (response.statusCode == 200 || response.statusCode == 201) {
@@ -254,7 +251,7 @@ class AuthController extends GetxController {
   Future<void> handleLogout() async {
     await ApiClient.postData(
       ApiConstants.logoutEndPoint,
-      jsonEncode({}),
+      {},
     );
     await _clearLocalData();
     Get.offAllNamed(AppRoutes.loginScreen);

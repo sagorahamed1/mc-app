@@ -25,6 +25,7 @@ dependencies:
   permission_handler:
   shared_preferences: ^2.5.3
   timeago: ^3.6.1
+  http: ^1.2.2
   mime_type: ^1.0.1
   flutter_spinkit: ^5.2.1
   chat_bubbles: ^1.6.0
