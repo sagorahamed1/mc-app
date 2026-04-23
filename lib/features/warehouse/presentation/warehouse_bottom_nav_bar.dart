@@ -1,11 +1,11 @@
 
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:mc/features/warehouse/presentation/controllers/warehouse_order_controller.dart';
 import 'package:mc/global/custom_assets/assets.gen.dart';
 import 'package:mc/core/utils/app_colors.dart';
-import 'package:mc/features/merchandiser/presentation/merchandiser_home_screen.dart';
 import 'package:mc/features/warehouse/presentation/warehouse_home_screen.dart';
-
 import 'package:mc/features/profile/presentation/profile_screen.dart';
 import 'package:mc/features/warehouse/presentation/warehouse_pending_order_screen.dart';
 
@@ -17,12 +17,13 @@ class WareHouseBottomNavBar extends StatefulWidget {
 
 class _WareHouseBottomNavBarState extends State<WareHouseBottomNavBar> {
   int _selectedIndex = 0;
+  final WarehouseOrderController _ctrl =
+      Get.find<WarehouseOrderController>();
 
   static const List<Widget> _widgetOptions = <Widget>[
     WareHouseHomeScreen(),
     WareHousePendingOrderScreen(type: "Pending"),
     WareHousePendingOrderScreen(type: "Completed"),
-
     ProfileScreen(),
   ];
 
@@ -30,6 +31,18 @@ class _WareHouseBottomNavBarState extends State<WareHouseBottomNavBar> {
     setState(() {
       _selectedIndex = index;
     });
+    switch (index) {
+      case 0:
+        _ctrl.fetchDashboard();
+        _ctrl.loadRecentOrders();
+        break;
+      case 1:
+        _ctrl.loadPendingOrders(refresh: true);
+        break;
+      case 2:
+        _ctrl.loadCompletedOrders(refresh: true);
+        break;
+    }
   }
 
   @override

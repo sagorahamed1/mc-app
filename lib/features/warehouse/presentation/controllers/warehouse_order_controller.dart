@@ -22,6 +22,14 @@ class WarehouseOrderController extends GetxController {
   int _completedPage = 1;
   bool _completedHasMore = true;
 
+  // ── All orders (All Orders screen, paginated) ─────────────────────────
+  final RxList<OrderModel> allOrders = <OrderModel>[].obs;
+  final RxBool isAllOrdersLoading = false.obs;
+  final RxBool isAllOrdersPaginationLoading = false.obs;
+  final ScrollController allOrdersScrollController = ScrollController();
+  int _allOrdersPage = 1;
+  bool _allOrdersHasMore = true;
+
   // ── Recent orders (home screen) ───────────────────────────────────────
   final RxList<OrderModel> recentOrders = <OrderModel>[].obs;
   final RxBool isRecentLoading = false.obs;
@@ -40,6 +48,7 @@ class WarehouseOrderController extends GetxController {
     super.onInit();
     pendingScrollController.addListener(_onPendingScroll);
     completedScrollController.addListener(_onCompletedScroll);
+    allOrdersScrollController.addListener(_onAllOrdersScroll);
     loadPendingOrders();
     loadCompletedOrders();
     loadRecentOrders();
@@ -50,6 +59,7 @@ class WarehouseOrderController extends GetxController {
   void onClose() {
     pendingScrollController.dispose();
     completedScrollController.dispose();
+    allOrdersScrollController.dispose();
     super.onClose();
   }
 
@@ -66,6 +76,22 @@ class WarehouseOrderController extends GetxController {
         pageRef: (p) => _pendingPage = p,
         hasMoreRef: (v) => _pendingHasMore = v,
         paginationLoading: isPendingPaginationLoading,
+      );
+    }
+  }
+
+  void _onAllOrdersScroll() {
+    if (allOrdersScrollController.position.pixels >=
+            allOrdersScrollController.position.maxScrollExtent - 200 &&
+        !isAllOrdersPaginationLoading.value &&
+        _allOrdersHasMore) {
+      _fetchOrders(
+        page: _allOrdersPage + 1,
+        list: allOrders,
+        append: true,
+        pageRef: (p) => _allOrdersPage = p,
+        hasMoreRef: (v) => _allOrdersHasMore = v,
+        paginationLoading: isAllOrdersPaginationLoading,
       );
     }
   }
@@ -105,6 +131,23 @@ class WarehouseOrderController extends GetxController {
     );
   }
 
+  Future<void> loadAllOrders({bool refresh = false}) async {
+    if (refresh) {
+      _allOrdersPage = 1;
+      _allOrdersHasMore = true;
+      allOrders.clear();
+    }
+    await _fetchOrders(
+      page: 1,
+      list: allOrders,
+      append: false,
+      pageRef: (p) => _allOrdersPage = p,
+      hasMoreRef: (v) => _allOrdersHasMore = v,
+      mainLoading: isAllOrdersLoading,
+      paginationLoading: isAllOrdersPaginationLoading,
+    );
+  }
+
   Future<void> loadCompletedOrders({bool refresh = false}) async {
     if (refresh) {
       _completedPage = 1;
@@ -137,7 +180,7 @@ class WarehouseOrderController extends GetxController {
 
   Future<void> _fetchOrders({
     required int page,
-    required String status,
+    String? status,
     required RxList<OrderModel> list,
     required bool append,
     required void Function(int) pageRef,
@@ -148,8 +191,9 @@ class WarehouseOrderController extends GetxController {
     if (!append) mainLoading?.call(true);
     if (append) paginationLoading?.call(true);
 
+    final statusParam = status != null ? '&status=$status' : '';
     final uri =
-        '${ApiConstants.orderEndPoint}?page=$page&limit=$_limit&status=$status';
+        '${ApiConstants.orderEndPoint}?page=$page&limit=$_limit$statusParam';
     final response = await ApiClient.getData(uri);
 
     if (response.statusCode == 200) {

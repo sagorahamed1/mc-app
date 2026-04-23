@@ -6,6 +6,8 @@ import 'package:mc/features/merchandiser/presentation/controllers/report_control
 import 'package:mc/features/merchandiser/presentation/controllers/order_controller.dart';
 import 'package:mc/features/warehouse/presentation/controllers/warehouse_order_controller.dart';
 import 'package:mc/features/driver/presentation/controllers/driver_controller.dart';
+import 'package:mc/features/notification/presentation/controllers/notification_controller.dart';
+import 'package:mc/features/profile/presentation/controllers/setting_controller.dart';
 
 class DependencyInjection implements Bindings {
   @override
@@ -17,5 +19,7 @@ class DependencyInjection implements Bindings {
     Get.lazyPut(() => OrderController(), fenix: true);
     Get.lazyPut(() => WarehouseOrderController(), fenix: true);
     Get.lazyPut(() => DriverController(), fenix: true);
+    Get.lazyPut(() => NotificationController(), fenix: true);
+    Get.lazyPut(() => SettingController(), fenix: true);
   }
 }

@@ -50,11 +50,10 @@ class SettingScreen extends StatelessWidget {
 
 
             _customCard(Assets.icons.termsIcons.svg(), "Terms & Condition", (){
-
               Get.toNamed(AppRoutes.privacyPolicyAllScreen, arguments: {
-                "title" : "Terms of service",
+                "title": "Terms of service",
+                "key": "terms-conditions",
               });
-
             }),
 
 
@@ -66,9 +65,9 @@ class SettingScreen extends StatelessWidget {
 
 
             _customCard(Assets.icons.privacy.svg(), "Privacy Policy", (){
-
               Get.toNamed(AppRoutes.privacyPolicyAllScreen, arguments: {
-                "title" : "Privacy Policy",
+                "title": "Privacy Policy",
+                "key": "privacy-policy",
               });
             }),
 
@@ -81,12 +80,10 @@ class SettingScreen extends StatelessWidget {
 
 
             _customCard(Assets.icons.about.svg(), "About Us", (){
-
-
               Get.toNamed(AppRoutes.privacyPolicyAllScreen, arguments: {
-                "title" : "About Us",
+                "title": "About Us",
+                "key": "about-us",
               });
-
             }),
 
 

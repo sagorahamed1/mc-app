@@ -182,7 +182,11 @@ class _WareHouseHomeScreenState extends State<WareHouseHomeScreen> {
                     children: [
                       CustomText(text: "Recent Orders", fontWeight: FontWeight.w500),
                       GestureDetector(
-                        onTap: () => Get.toNamed(AppRoutes.allOrderScreen),
+                        onTap: () =>
+                            Get.toNamed(AppRoutes.allOrderScreen)?.then((_) {
+                          _ctrl.fetchDashboard();
+                          _ctrl.loadRecentOrders();
+                        }),
                         child: CustomText(
                           text: "View All",
                           fontSize: 12.h,
@@ -212,9 +216,7 @@ class _WareHouseHomeScreenState extends State<WareHouseHomeScreen> {
                         final order = _ctrl.recentOrders[index];
                         final dateStr = DateFormat("dd/MM/yy 'at' hh:mm a")
                             .format(order.createdAt.toLocal());
-                        final shortId = order.id.length > 6
-                            ? order.id.substring(order.id.length - 6)
-                            : order.id;
+                        final shortId =  order.id;
                         return Container(
                           margin: EdgeInsets.only(bottom: 16.h),
                           decoration: BoxDecoration(
@@ -235,7 +237,7 @@ class _WareHouseHomeScreenState extends State<WareHouseHomeScreen> {
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    CustomText(text: "#$shortId", fontSize: 16.h),
+                                    CustomText(text: order., fontSize: 12.h),
                                     SizedBox(height: 2.h),
                                     CustomText(
                                       text: order.store.name,
