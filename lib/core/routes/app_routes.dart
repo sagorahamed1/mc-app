@@ -8,9 +8,11 @@ import 'package:mc/features/auth/presentation/forgot_password_screen.dart';
 import 'package:mc/features/auth/presentation/reset_password_screen.dart';
 import 'package:mc/features/auth/presentation/verify_screen.dart';
 import 'package:mc/features/driver/presentation/driver_bottom_nav_bar.dart';
+import 'package:mc/features/driver/presentation/driver_order_screen.dart';
 import 'package:mc/features/driver/presentation/confirmation_screen.dart';
 import 'package:mc/features/driver/presentation/delivery_details_screen.dart';
 import 'package:mc/features/driver/presentation/manage_return_screen.dart';
+import 'package:mc/features/driver/presentation/see_direction_screen.dart';
 import 'package:mc/features/merchandiser/presentation/merchandiser_bottom_nav_bar.dart';
 import 'package:mc/features/merchandiser/presentation/assigned_stores_screen.dart';
 import 'package:mc/features/merchandiser/presentation/confirm_order_screen.dart';
@@ -50,8 +52,10 @@ class AppRoutes {
   static const String allOrderScreen = "/AllOrderScreen";
   static const String pickListScreen = "/PickListScreen";
   static const String driverBottomNavBar = "/DriverBottomNavBar";
+  static const String driverOrderScreen = "/DriverOrderScreen";
   static const String deliveryDetailsScreen = "/DeliveryDetailsScreen";
   static const String manageReturnSreen = "/ManageReturnSreen";
+  static const String seeDirectionScreen = "/SeeDirectionScreen";
   static const String confirmationScreen = "/ConfirmationScreen";
   static const String productScreen = "/ProductScreen";
   static const String notificationScreen = "/NotificationScreen";
@@ -83,8 +87,10 @@ class AppRoutes {
     GetPage(name: allOrderScreen, page: () =>  AllOrderScreen()),
     GetPage(name: pickListScreen, page: () =>  PickListScreen()),
     GetPage(name: driverBottomNavBar, page: () =>  DriverBottomNavBar()),
+    GetPage(name: driverOrderScreen, page: () => const DriverOrderScreen()),
     GetPage(name: deliveryDetailsScreen, page: () =>  DeliveryDetailsScreen()),
     GetPage(name: manageReturnSreen, page: () =>  ManageReturnSreen()),
+    GetPage(name: seeDirectionScreen, page: () => const SeeDirectionScreen()),
 
     GetPage(name: confirmationScreen, page: () =>  ConfirmationScreen()),
     GetPage(name: productScreen, page: () =>  ProductScreen()),

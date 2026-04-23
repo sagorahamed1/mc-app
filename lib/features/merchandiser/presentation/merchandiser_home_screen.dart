@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:mc/core/constants/api_constants.dart';
 import 'package:mc/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:mc/features/merchandiser/presentation/controllers/merchandiser_controller.dart';
@@ -55,12 +56,29 @@ class _MerchandiserHomeScreenState extends State<MerchandiserHomeScreen> {
                       fit: BoxFit.cover)),
               child: Row(
                 children: [
-                  Obx(() => CustomNetworkImage(
-                    border: Border.all(color: Colors.grey, width: 0.5.r),
+                  Obx(() {
+                    if (_auth.isUserLoading.value) {
+                      return Shimmer.fromColors(
+                        baseColor: Colors.white.withOpacity(0.4),
+                        highlightColor: Colors.white.withOpacity(0.8),
+                        child: Container(
+                          height: 50.h,
+                          width: 50.w,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.white.withOpacity(0.4),
+                          ),
+                        ),
+                      );
+                    }
+                    return CustomNetworkImage(
+                      border: Border.all(color: Colors.grey, width: 0.5.r),
                       imageUrl: ApiConstants.imageBaseUrl + _auth.userImage.value,
                       height: 50.h,
                       width: 50.w,
-                      boxShape: BoxShape.circle)),
+                      boxShape: BoxShape.circle,
+                    );
+                  }),
                   SizedBox(width: 12.w),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -69,9 +87,23 @@ class _MerchandiserHomeScreenState extends State<MerchandiserHomeScreen> {
                           text: "Welcome!",
                           color: Colors.white,
                           fontSize: 12.h),
-                      Obx(() => CustomText(
-                          text: _auth.userName.value,
-                          color: Colors.white)),
+                      Obx(() {
+                        if (_auth.isUserLoading.value) {
+                          return Shimmer.fromColors(
+                            baseColor: Colors.white.withOpacity(0.4),
+                            highlightColor: Colors.white.withOpacity(0.8),
+                            child: Container(
+                              height: 14.h,
+                              width: 100.w,
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.4),
+                                borderRadius: BorderRadius.circular(4.r),
+                              ),
+                            ),
+                          );
+                        }
+                        return CustomText(text: _auth.userName.value, color: Colors.white);
+                      }),
                     ],
                   ),
                   const Spacer(),

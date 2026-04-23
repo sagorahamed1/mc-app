@@ -25,14 +25,18 @@ class OrderProductItem {
   final OrderProductDetail product;
   final int unitNeed;
   final int unit;
+  final int unitReturn;
   final double unitPrice;
+  final int lotNo;
 
   OrderProductItem({
     required this.id,
     required this.product,
     required this.unitNeed,
     required this.unit,
+    required this.unitReturn,
     required this.unitPrice,
+    required this.lotNo,
   });
 
   factory OrderProductItem.fromJson(Map<String, dynamic> json) =>
@@ -41,7 +45,9 @@ class OrderProductItem {
         product: OrderProductDetail.fromJson(json['productId'] ?? {}),
         unitNeed: json['unitNeed'] ?? 0,
         unit: json['unit'] ?? 0,
+        unitReturn: json['unitReturn'] ?? 0,
         unitPrice: (json['unitPrice'] ?? 0).toDouble(),
+        lotNo: json['lotNo'] ?? 0,
       );
 }
 
@@ -51,6 +57,8 @@ class OrderStoreModel {
   final String storeNumber;
   final String address;
   final String phone;
+  final double lat;
+  final double lng;
 
   OrderStoreModel({
     required this.id,
@@ -58,16 +66,22 @@ class OrderStoreModel {
     required this.storeNumber,
     required this.address,
     required this.phone,
+    required this.lat,
+    required this.lng,
   });
 
-  factory OrderStoreModel.fromJson(Map<String, dynamic> json) =>
-      OrderStoreModel(
-        id: json['_id'] ?? '',
-        name: json['name'] ?? '',
-        storeNumber: json['storeNumber'] ?? '',
-        address: json['address'] ?? '',
-        phone: json['phone'] ?? '',
-      );
+  factory OrderStoreModel.fromJson(Map<String, dynamic> json) {
+    final coords = (json['location']?['coordinates'] as List?) ?? [];
+    return OrderStoreModel(
+      id: json['_id'] ?? '',
+      name: json['name'] ?? '',
+      storeNumber: json['storeNumber'] ?? '',
+      address: json['address'] ?? '',
+      phone: json['phone'] ?? '',
+      lng: coords.isNotEmpty ? (coords[0] as num).toDouble() : 0.0,
+      lat: coords.length > 1 ? (coords[1] as num).toDouble() : 0.0,
+    );
+  }
 }
 
 class OrderModel {

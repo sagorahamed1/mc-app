@@ -1,6 +1,8 @@
 
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:mc/features/driver/presentation/controllers/driver_controller.dart';
 import 'package:mc/global/custom_assets/assets.gen.dart';
 import 'package:mc/core/utils/app_colors.dart';
 import 'package:mc/features/profile/presentation/profile_screen.dart';
@@ -15,6 +17,7 @@ class DriverBottomNavBar extends StatefulWidget {
 
 class _DriverBottomNavBarState extends State<DriverBottomNavBar> {
   int _selectedIndex = 0;
+  final DriverController _ctrl = Get.find<DriverController>();
 
   static const List<Widget> _widgetOptions = <Widget>[
     DriverHomeScreen(),
@@ -26,6 +29,12 @@ class _DriverBottomNavBarState extends State<DriverBottomNavBar> {
     setState(() {
       _selectedIndex = index;
     });
+    if (index == 0) {
+      _ctrl.fetchDashboard();
+      _ctrl.loadUpcomingOrders();
+    } else if (index == 1) {
+      _ctrl.loadOrderScreenOrders(refresh: true);
+    }
   }
 
   @override

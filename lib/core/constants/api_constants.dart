@@ -19,6 +19,12 @@ class ApiConstants {
   static const String orderEndPoint = "/order";
   static const String storeReportQuestions = "/store-report-question?limit=1000";
   static const String uploadMultiple = "/upload/multiple";
+  static const String warehouseDashboard = "/dashboard/wa";
+  static const String driverDashboard = "/dashboard/driver";
+  static String getOrderById(String orderId) => "/order/$orderId";
+  static String manageReturns(String orderId) => "/order/$orderId/manage-returns";
+  static String deliverOrder(String orderId) => "/order/$orderId/deliver";
+  static String completeOrder(String orderId) => "/order/$orderId/complete";
   static String submitReport(String visitId) => "/visit/$visitId/submit-report";
   static String visitClockIn(String visitId) => "/visit/$visitId/clock-in";
   static String visitClockOut(String visitId) => "/visit/$visitId/clock-out";

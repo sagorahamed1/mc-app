@@ -12,6 +12,7 @@ class AuthController extends GetxController {
   // ─────────────────────── User Profile (reactive) ───────────────────────
   final RxString userName = ''.obs;
   final RxString userImage = ''.obs;
+  final RxBool isUserLoading = true.obs;
 
   @override
   void onInit() {
@@ -20,8 +21,10 @@ class AuthController extends GetxController {
   }
 
   Future<void> _loadUserData() async {
+    isUserLoading(true);
     userName(await PrefsHelper.getString(AppConstants.name));
     userImage(await PrefsHelper.getString(AppConstants.image));
+    isUserLoading(false);
   }
 
   // ─────────────────────── Login ───────────────────────
