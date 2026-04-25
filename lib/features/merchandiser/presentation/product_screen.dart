@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:mc/core/constants/api_constants.dart';
 import 'package:mc/core/routes/app_routes.dart';
 import 'package:mc/core/utils/app_colors.dart';
 import 'package:mc/features/merchandiser/data/models/product_model.dart';
@@ -191,7 +192,7 @@ class ProductCard extends StatelessWidget {
             children: [
               // Product Image
               CustomNetworkImage(
-                imageUrl: product.logo,
+                imageUrl:  "${ApiConstants.imageBaseUrl}${product.logo}",
                 width: 121.w,
                 height: 150.h,
                 borderRadius: BorderRadius.circular(8.r),
@@ -207,6 +208,7 @@ class ProductCard extends StatelessWidget {
                       children: [
                         Expanded(
                           child: CustomText(
+                            textAlign: TextAlign.start,
                             text: product.name,
                             fontSize: 18.sp,
                           ),

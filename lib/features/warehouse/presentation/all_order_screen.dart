@@ -144,8 +144,7 @@ class _AllOrderScreenState extends State<AllOrderScreen> {
         ? order.id.substring(order.id.length - 6).toUpperCase()
         : order.id.toUpperCase();
 
-    final isActionable =
-        order.status == 'WA_assigned' || order.status == 'packed';
+    final isActionable = order.status == 'WA_assigned';
 
     return Container(
       margin:
@@ -169,7 +168,7 @@ class _AllOrderScreenState extends State<AllOrderScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  CustomText(text: '#$shortId', fontSize: 15.h,
+                  CustomText(text: '#${order.sid}', fontSize: 15.h,
                       fontWeight: FontWeight.w600),
                   SizedBox(height: 2.h),
                   CustomText(

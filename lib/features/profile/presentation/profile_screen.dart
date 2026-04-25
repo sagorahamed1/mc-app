@@ -33,7 +33,7 @@ class ProfileScreen extends StatelessWidget {
               children: [
                 SizedBox(height: 100.h),
                 Obx(() => CustomNetworkImage(
-                    imageUrl: ApiConstants.imageBaseUrl + auth.userImage.value,
+                    imageUrl: "${ApiConstants.imageBaseUrl}/" + auth.userImage.value,
                     height: 100.h,
                     width: 100.w,
                     boxShape: BoxShape.circle)),

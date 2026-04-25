@@ -1,9 +1,9 @@
 class ApiConstants {
-  // static const String baseUrl = "http://172.252.13.130:8085/api/v1";
-  // static const String imageBaseUrl = "http://172.252.13.130:8085/";
+  static const String baseUrl = "https://501wk9nr-8086.asse.devtunnels.ms/api/v1";
+  static const String imageBaseUrl = "https://501wk9nr-8086.asse.devtunnels.ms/uploads/";
 
-  static const String baseUrl = "http://10.10.11.90:8085/api/v1";
-  static const String imageBaseUrl = "http://10.10.11.90:8086/uploads/";
+  // static const String baseUrl = "http://10.10.11.90:8085/api/v1";
+  // static const String imageBaseUrl = "http://10.10.11.90:8086/uploads/";
 
   static const String signInEndPoint = "/auth/login";
   static const String forgotPasswordPoint = "/auth/forgot-password";
@@ -25,6 +25,7 @@ class ApiConstants {
   static const String driverDashboard = "/dashboard/driver";
   static String getOrderById(String orderId) => "/order/$orderId";
   static String manageReturns(String orderId) => "/order/$orderId/manage-returns";
+  static String packOrder(String orderId) => "/order/$orderId/pack";
   static String deliverOrder(String orderId) => "/order/$orderId/deliver";
   static String completeOrder(String orderId) => "/order/$orderId/complete";
   static String submitReport(String visitId) => "/visit/$visitId/submit-report";

@@ -8,6 +8,7 @@ import 'package:mc/core/routes/app_routes.dart';
 import 'package:mc/core/utils/app_colors.dart';
 import 'package:mc/core/constants/api_constants.dart';
 import 'package:mc/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:mc/features/merchandiser/data/models/order_model.dart';
 import 'package:mc/features/warehouse/presentation/controllers/warehouse_order_controller.dart';
 import 'package:mc/shared/widgets/custom_network_image.dart';
 import 'package:mc/shared/widgets/custom_button.dart';
@@ -23,6 +24,57 @@ class WareHouseHomeScreen extends StatefulWidget {
 class _WareHouseHomeScreenState extends State<WareHouseHomeScreen> {
   final WarehouseOrderController _ctrl = Get.find<WarehouseOrderController>();
   final AuthController _auth = Get.find<AuthController>();
+
+  Color _statusColor(String status) {
+    switch (status) {
+      case 'WA_assigned':
+        return AppColors.primaryColor;
+      case 'packed':
+        return const Color(0xff7B1FA2);
+      case 'driver_assigned':
+        return const Color(0xff1565C0);
+      case 'delivered':
+        return const Color(0xffE07B00);
+      case 'completed':
+        return const Color(0xff2E7D32);
+      case 'approved':
+        return const Color(0xff00838F);
+      default:
+        return Colors.grey;
+    }
+  }
+
+  Color _statusBg(String status) {
+    switch (status) {
+      case 'WA_assigned':
+        return const Color(0xffE7F9FF);
+      case 'packed':
+        return const Color(0xffF3E5F5);
+      case 'driver_assigned':
+        return const Color(0xffE3F2FD);
+      case 'delivered':
+        return const Color(0xffFFF3E0);
+      case 'completed':
+        return const Color(0xffE8F5E9);
+      case 'approved':
+        return const Color(0xffE0F7FA);
+      default:
+        return Colors.grey.shade100;
+    }
+  }
+
+  String _statusLabel(String status) {
+    switch (status) {
+      case 'WA_assigned':
+        return 'WA Assigned';
+      case 'driver_assigned':
+        return 'Driver Assigned';
+      default:
+        return status.isNotEmpty
+            ? status[0].toUpperCase() + status.substring(1)
+            : status;
+    }
+  }
 
   List<Map<String, dynamic>> get _summary => [
     {"icon": Assets.icons.pandingIcon.svg(), "title": "Pending", "value": _ctrl.dashPending.value.toString()},
@@ -67,7 +119,7 @@ class _WareHouseHomeScreenState extends State<WareHouseHomeScreen> {
                     }
                     return CustomNetworkImage(
                       border: Border.all(color: Colors.grey, width: 0.5.r),
-                      imageUrl: ApiConstants.imageBaseUrl + _auth.userImage.value,
+                      imageUrl: "${ApiConstants.imageBaseUrl}/" + _auth.userImage.value,
                       height: 50.h,
                       width: 50.w,
                       boxShape: BoxShape.circle,
@@ -214,60 +266,7 @@ class _WareHouseHomeScreenState extends State<WareHouseHomeScreen> {
                       padding: EdgeInsets.zero,
                       itemBuilder: (context, index) {
                         final order = _ctrl.recentOrders[index];
-                        final dateStr = DateFormat("dd/MM/yy 'at' hh:mm a")
-                            .format(order.createdAt.toLocal());
-                        final shortId =  order.id;
-                        return Container(
-                          margin: EdgeInsets.only(bottom: 16.h),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.shade400,
-                                blurRadius: 1.5,
-                                offset: const Offset(0.5, 0.5),
-                              ),
-                            ],
-                            borderRadius: BorderRadius.circular(8.r),
-                          ),
-                          child: Padding(
-                            padding: EdgeInsets.all(12.5.r),
-                            child: Row(
-                              children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    CustomText(text: order., fontSize: 12.h),
-                                    SizedBox(height: 2.h),
-                                    CustomText(
-                                      text: order.store.name,
-                                      fontSize: 12.h,
-                                      color: const Color(0xff333333),
-                                    ),
-                                    CustomText(
-                                      text: dateStr,
-                                      fontSize: 10.h,
-                                      color: AppColors.textColor5c5c5c,
-                                    ),
-                                  ],
-                                ),
-                                const Spacer(),
-                                CustomButton(
-                                  height: 25.h,
-                                  width: 125.h,
-                                  fontSize: 10.h,
-                                  borderRadius: 8.r,
-                                  loaderIgnore: true,
-                                  title: "View Pick List",
-                                  onpress: () => Get.toNamed(
-                                    AppRoutes.pickListScreen,
-                                    arguments: order,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
+                        return _buildOrderCard(order);
                       },
                     );
                   }),
@@ -275,6 +274,96 @@ class _WareHouseHomeScreenState extends State<WareHouseHomeScreen> {
                   SizedBox(height: 50.h),
                 ],
               ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildOrderCard(OrderModel order) {
+    final dateStr = DateFormat("dd/MM/yy 'at' hh:mm a")
+        .format(order.createdAt.toLocal());
+    final isActionable = order.status == 'WA_assigned';
+
+    return Container(
+      margin: EdgeInsets.only(bottom: 16.h, top: 2.h, left: 2.w, right: 2.w),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.shade400,
+            blurRadius: 1.5,
+            offset: const Offset(0.5, 0.5),
+          ),
+        ],
+        borderRadius: BorderRadius.circular(8.r),
+      ),
+      child: Padding(
+        padding: EdgeInsets.all(12.5.r),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CustomText(
+                    text: '#${order.sid}',
+                    fontSize: 15.h,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  SizedBox(height: 2.h),
+                  CustomText(
+                    text: order.store.name,
+                    fontSize: 12.h,
+                    color: const Color(0xff333333),
+                  ),
+                  CustomText(
+                    text: dateStr,
+                    fontSize: 10.h,
+                    color: AppColors.textColor5c5c5c,
+                  ),
+                ],
+              ),
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h),
+                  decoration: BoxDecoration(
+                    color: _statusBg(order.status),
+                    borderRadius: BorderRadius.circular(20.r),
+                  ),
+                  child: CustomText(
+                    text: _statusLabel(order.status),
+                    fontSize: 9.h,
+                    color: _statusColor(order.status),
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                SizedBox(height: 6.h),
+                if (isActionable)
+                  CustomButton(
+                    height: 25.h,
+                    width: 115.w,
+                    fontSize: 10.h,
+                    borderRadius: 8.r,
+                    loaderIgnore: true,
+                    title: 'View Pick List',
+                    onpress: () => Get.toNamed(
+                      AppRoutes.pickListScreen,
+                      arguments: order,
+                    ),
+                  )
+                else
+                  CustomText(
+                    text: '\$${order.totalPrice.toStringAsFixed(2)}',
+                    fontSize: 12.h,
+                    color: Colors.green,
+                    fontWeight: FontWeight.w600,
+                  ),
+              ],
             ),
           ],
         ),

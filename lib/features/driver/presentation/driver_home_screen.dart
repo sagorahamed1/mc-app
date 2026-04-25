@@ -60,7 +60,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                     return CustomNetworkImage(
                       border: Border.all(color: Colors.grey, width: 0.5.r),
                       imageUrl:
-                          ApiConstants.imageBaseUrl + _auth.userImage.value,
+                          "${ApiConstants.imageBaseUrl}/" + _auth.userImage.value,
                       height: 50.h,
                       width: 50.w,
                       boxShape: BoxShape.circle,

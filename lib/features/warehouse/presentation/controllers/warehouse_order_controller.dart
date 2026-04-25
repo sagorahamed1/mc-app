@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mc/core/constants/api_constants.dart';
@@ -70,7 +71,7 @@ class WarehouseOrderController extends GetxController {
         _pendingHasMore) {
       _fetchOrders(
         page: _pendingPage + 1,
-        status: 'pending',
+        status: 'WA_assigned',
         list: pendingOrders,
         append: true,
         pageRef: (p) => _pendingPage = p,
@@ -121,7 +122,7 @@ class WarehouseOrderController extends GetxController {
     }
     await _fetchOrders(
       page: 1,
-      status: 'pending',
+      status: 'WA_assigned',
       list: pendingOrders,
       append: false,
       pageRef: (p) => _pendingPage = p,
@@ -169,7 +170,7 @@ class WarehouseOrderController extends GetxController {
   Future<void> loadRecentOrders() async {
     isRecentLoading(true);
     final response = await ApiClient.getData(
-      '${ApiConstants.orderEndPoint}?page=1&limit=5',
+      '${ApiConstants.orderEndPoint}?page=1&limit=10',
     );
     if (response.statusCode == 200) {
       final data = (response.body['data'] as List?) ?? [];
@@ -230,6 +231,26 @@ class WarehouseOrderController extends GetxController {
       dashAvgMark((data['avgMark'] ?? 0).toDouble());
     }
     isDashboardLoading(false);
+  }
+
+  // ── Pack order ────────────────────────────────────────────────────────
+  final RxBool isPackLoading = false.obs;
+
+  Future<bool> packOrder({
+    required String orderId,
+    required String palletNo,
+    required List<Map<String, dynamic>> products,
+  }) async {
+    isPackLoading(true);
+    final body = jsonEncode({'palletNo': palletNo, 'products': products});
+    final response = await ApiClient.patch(ApiConstants.packOrder(orderId), body);
+    isPackLoading(false);
+    if (response.statusCode == 200 || response.statusCode == 201) return true;
+    ToastMessageHelper.showToastMessage(
+      response.body?['message'] ?? 'Failed to submit pack',
+      title: 'Error',
+    );
+    return false;
   }
 
   // Summary counts for home screen

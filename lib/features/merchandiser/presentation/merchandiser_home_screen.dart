@@ -73,7 +73,7 @@ class _MerchandiserHomeScreenState extends State<MerchandiserHomeScreen> {
                     }
                     return CustomNetworkImage(
                       border: Border.all(color: Colors.grey, width: 0.5.r),
-                      imageUrl: ApiConstants.imageBaseUrl + _auth.userImage.value,
+                      imageUrl: "${ApiConstants.imageBaseUrl}/${_auth.userImage.value}",
                       height: 50.h,
                       width: 50.w,
                       boxShape: BoxShape.circle,

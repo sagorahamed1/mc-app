@@ -122,7 +122,7 @@ class _WarehouseOrderCard extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                CustomText(text: "#$shortId", fontSize: 16.h),
+                CustomText(text: "#${order.sid}", fontSize: 16.h),
                 SizedBox(height: 2.h),
                 CustomText(
                   text: order.store.name,

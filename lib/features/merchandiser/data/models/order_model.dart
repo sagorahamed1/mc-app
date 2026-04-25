@@ -1,14 +1,31 @@
+class OrderProductLot {
+  final int lotNo;
+  final int units;
+
+  OrderProductLot({required this.lotNo, required this.units});
+
+  factory OrderProductLot.fromJson(Map<String, dynamic> json) =>
+      OrderProductLot(
+        lotNo: json['lotNo'] ?? 0,
+        units: json['units'] ?? 0,
+      );
+}
+
 class OrderProductDetail {
   final String id;
   final String itemNo;
   final String name;
   final double price;
+  final int unitPerCase;
+  final List<OrderProductLot> productLots;
 
   OrderProductDetail({
     required this.id,
     required this.itemNo,
     required this.name,
     required this.price,
+    required this.unitPerCase,
+    required this.productLots,
   });
 
   factory OrderProductDetail.fromJson(Map<String, dynamic> json) =>
@@ -17,6 +34,10 @@ class OrderProductDetail {
         itemNo: json['itemNo'] ?? '',
         name: json['name'] ?? '',
         price: (json['price'] ?? 0).toDouble(),
+        unitPerCase: json['unitPerCase'] ?? 0,
+        productLots: ((json['productLots'] as List?) ?? [])
+            .map((e) => OrderProductLot.fromJson(e))
+            .toList(),
       );
 }
 
@@ -84,27 +105,95 @@ class OrderStoreModel {
   }
 }
 
+class OrderUserModel {
+  final String id;
+  final String name;
+  final String email;
+  final String phone;
+  final String profileImage;
+  final int sid;
 
+  OrderUserModel({
+    required this.id,
+    required this.name,
+    required this.email,
+    required this.phone,
+    required this.profileImage,
+    required this.sid,
+  });
 
+  factory OrderUserModel.fromJson(Map<String, dynamic> json) => OrderUserModel(
+        id: json['_id'] ?? '',
+        name: json['name'] ?? '',
+        email: json['email'] ?? '',
+        phone: json['phone'] ?? '',
+        profileImage: json['profileImage'] ?? '',
+        sid: json['sid'] ?? 0,
+      );
+}
+
+class OrderVisitModel {
+  final String id;
+  final DateTime dateTime;
+  final String status;
+
+  OrderVisitModel({
+    required this.id,
+    required this.dateTime,
+    required this.status,
+  });
+
+  factory OrderVisitModel.fromJson(Map<String, dynamic> json) => OrderVisitModel(
+        id: json['_id'] ?? '',
+        dateTime: DateTime.tryParse(json['dateTime'] ?? '') ?? DateTime.now(),
+        status: json['status'] ?? '',
+      );
+}
 
 class OrderModel {
   final String id;
+  final int sid;
   final String status;
   final double totalPrice;
   final String palletNo;
   final List<dynamic> stickers;
+  final String merchandiserId;
+  final String storeId;
+  final String mmId;
+  final String visitId;
+  final String waId;
+  final String driverId;
   final OrderStoreModel store;
+  final OrderUserModel? merchandiser;
+  final OrderUserModel? mm;
+  final OrderUserModel? wa;
+  final OrderUserModel? driver;
+  final OrderVisitModel? visit;
   final DateTime createdAt;
+  final DateTime updatedAt;
   final List<OrderProductItem> products;
 
   OrderModel({
     required this.id,
+    required this.sid,
     required this.status,
     required this.totalPrice,
     required this.palletNo,
     required this.stickers,
+    required this.merchandiserId,
+    required this.storeId,
+    required this.mmId,
+    required this.visitId,
+    required this.waId,
+    required this.driverId,
     required this.store,
+    this.merchandiser,
+    this.mm,
+    this.wa,
+    this.driver,
+    this.visit,
     required this.createdAt,
+    required this.updatedAt,
     required this.products,
   });
 
@@ -119,12 +208,31 @@ class OrderModel {
 
   factory OrderModel.fromJson(Map<String, dynamic> json) => OrderModel(
         id: json['_id'] ?? '',
+        sid: json['sid'] ?? 0,
         status: json['status'] ?? '',
         totalPrice: (json['totalPrice'] ?? 0).toDouble(),
         palletNo: json['palletNo'] ?? '',
         stickers: json['stickers'] ?? [],
+        merchandiserId: json['merchandiserId'] ?? '',
+        storeId: json['storeId'] ?? '',
+        mmId: json['MMId'] ?? '',
+        visitId: json['visitId'] ?? '',
+        waId: json['WAId'] ?? '',
+        driverId: json['driverId'] ?? '',
         store: OrderStoreModel.fromJson(json['store'] ?? {}),
+        merchandiser: json['merchandiser'] != null
+            ? OrderUserModel.fromJson(json['merchandiser'])
+            : null,
+        mm: json['MM'] != null ? OrderUserModel.fromJson(json['MM']) : null,
+        wa: json['WA'] != null ? OrderUserModel.fromJson(json['WA']) : null,
+        driver: json['driver'] != null
+            ? OrderUserModel.fromJson(json['driver'])
+            : null,
+        visit: json['visit'] != null
+            ? OrderVisitModel.fromJson(json['visit'])
+            : null,
         createdAt: DateTime.tryParse(json['createdAt'] ?? '') ?? DateTime.now(),
+        updatedAt: DateTime.tryParse(json['updatedAt'] ?? '') ?? DateTime.now(),
         products: ((json['products'] as List?) ?? [])
             .map((e) => OrderProductItem.fromJson(e))
             .toList(),
